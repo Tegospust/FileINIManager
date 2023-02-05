@@ -79,6 +79,12 @@ public class FileINIManager {
         return result;
     }
     
+    /**
+     * 
+     * @param aSectName
+     * @param aKey
+     * @return 
+     */
     public String getValue4SectKey(String aSectName, String aKey) {
         String result = null;
         Iterator<FINILine> iter = this.fileINILines.iterator();

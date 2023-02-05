@@ -56,6 +56,7 @@ public class MainFrame extends javax.swing.JFrame {
                 if (lstSections.getModel().getSize() == 0)
                     return; // pusta lista to nic nie robimy
                 FINILine selSect = lmSections.get(lstSections.getSelectedIndex());
+                System.out.printf("Line num. in .ini file: #%d\n",selSect.getLineNum());
                 if (!lmItems.isEmpty()) {
                     lmItems.clear();
                     clearKeyValueEditPanel(1);
