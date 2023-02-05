@@ -32,6 +32,15 @@ public class FileINIManager {
         return fileINILines;
     }
     
+    private ArrayList<FINILine> updatedKeys;
+    public ArrayList<FINILine> getUpdatedKeys() {
+        return updatedKeys;
+    }
+    
+    /**
+     * <font size="5" color="#ff0000">konstruktor</font>
+     * @param aFileName 
+     */
     FileINIManager(String aFileName) {
         this.fileName = aFileName;
         fileINILines = new ArrayList<>();
@@ -241,10 +250,47 @@ public class FileINIManager {
         for(String s: remarks)
             buff = buff.concat(s.concat("\n"));
         return buff;
-
-
-
     }
+    
+    /**
+     * 
+     * ustalanie FINILine po numerze linii
+     * 
+     * @param aLineNum
+     * @return 
+     */   
+    public FINILine iniLineBy(int aLineNum) {
+        FINILine result = null;
+        Iterator<FINILine> iter = fileINILines.iterator();
+        while(iter.hasNext()) {
+            FINILine finil = iter.next();
+            if(finil.getLineNum() == aLineNum) {
+                result = finil;
+                break;
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * aktualizowanie wartości klucza po numerze linii
+     * 
+     * @param lineNum
+     * @return true gdy powodzenie
+     */
+    public boolean updateValue(final int lineNum, String aNewValue) {
+        boolean result = false;
+        FINILine finil = iniLineBy(lineNum);
+        if (finil instanceof FINILineKeyValue) {
+            if (finil.getLineNum() == lineNum) {
+                ((FINILineKeyValue) finil).setValue(aNewValue);
+                updatedKeys.add(finil);
+                result = true;
+            }
+        }
+        return result;
+    }
+    
     
 /**
  * <font size="5" color="#ff0000">na potrzeby testów</font>

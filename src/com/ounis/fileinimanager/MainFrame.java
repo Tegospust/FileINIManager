@@ -35,14 +35,16 @@ public class MainFrame extends javax.swing.JFrame {
 /**
  * obsługa zdarzenia kliknięcia na przycisku btnSave
  */
-    class btnSaveClick implements ActionListener {
+    class btnChangeClick implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showConfirmDialog(null, 
-                    "kliknięto", 
-                    "akcja", JOptionPane.YES_NO_OPTION, 
-                    JOptionPane.INFORMATION_MESSAGE);
+            if(!edKey.getText().isBlank()) {
+                JOptionPane.showConfirmDialog(null, 
+                        "Potwierdź zmianę wartości klucza: ".concat(edKey.getText()), 
+                        "Potwierdzenie", JOptionPane.YES_NO_OPTION, 
+                        JOptionPane.QUESTION_MESSAGE);
+            }
         }
     
     }
@@ -143,10 +145,12 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
         FramesUtils.centerWindow(this, -1, -1);
         this.setResizable(false);
-        this.setTitle(aFileName);
+        this.setTitle(CONST.APP_TITLE);
         
         fINIManager = new FileINIManager(aFileName);
         if (fINIManager.loadFromFile() > -1) {
+            this.setTitle(this.getTitle().concat(": ").concat(aFileName));
+            
 //          lstSections SETUP
             lmSections = new DefaultListModel<FINILine>();
             lmSections.addAll(fINIManager.getSections());
@@ -167,13 +171,16 @@ public class MainFrame extends javax.swing.JFrame {
             lstItems.addMouseListener(new lstItemsMouseAdapter());
             
 //            btnSave SETUP
-            btnSave.addActionListener(new btnSaveClick());
+            btnChange.setText("Zmień");
+            btnChange.addActionListener(new btnChangeClick());
             
 //            mRemark SETUP 
             Font f = new Font("Monospace", Font.BOLD + Font.ITALIC, 14);
             mRemark.setFont(f);
             mRemark.setWrapStyleWord(true);
             
+//            lblRemark SETUP
+            lblRemark.setText("Komentarze do sekcji i kluczy w sekcjach");
             
         }
         else
@@ -200,7 +207,7 @@ public class MainFrame extends javax.swing.JFrame {
         lblSections = new javax.swing.JLabel();
         lblItems = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        btnSave = new javax.swing.JButton();
+        btnChange = new javax.swing.JButton();
         lblKey = new javax.swing.JLabel();
         edKey = new javax.swing.JTextField();
         lblValue = new javax.swing.JLabel();
@@ -218,11 +225,6 @@ public class MainFrame extends javax.swing.JFrame {
         lstSections.setBackground(new java.awt.Color(255, 255, 204));
         lstSections.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lstSections.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        lstSections.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                lstSectionsPropertyChange(evt);
-            }
-        });
         jScrollPane2.setViewportView(lstSections);
 
         lblSections.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -233,13 +235,8 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        btnSave.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        btnSave.setText("Zapisz");
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
-            }
-        });
+        btnChange.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        btnChange.setText("Zapisz");
 
         lblKey.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         lblKey.setText("Klucz");
@@ -263,7 +260,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnSave))
+                        .addComponent(btnChange))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblKey)
@@ -288,7 +285,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(edKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(edValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                .addComponent(btnSave)
+                .addComponent(btnChange)
                 .addContainerGap())
         );
 
@@ -296,6 +293,7 @@ public class MainFrame extends javax.swing.JFrame {
         lblRemark.setText("Komentarz");
 
         mRemark.setEditable(false);
+        mRemark.setBackground(new java.awt.Color(204, 255, 255));
         mRemark.setColumns(20);
         mRemark.setFont(new java.awt.Font("Monospaced", 1, 12)); // NOI18N
         mRemark.setRows(5);
@@ -307,21 +305,22 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(lblSections)
-                .addGap(267, 267, 267)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblRemark)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane3)))
+                        .addComponent(lblRemark)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblItems)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(lblSections)
+                        .addGap(267, 267, 267)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblItems)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -337,32 +336,23 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(lblSections)
                     .addComponent(lblItems))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblRemark)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3)))
-                .addContainerGap(26, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(lblRemark)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(35, 35, 35)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(26, Short.MAX_VALUE)))
+                    .addContainerGap(199, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSaveActionPerformed
-
-    private void lstSectionsPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_lstSectionsPropertyChange
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lstSectionsPropertyChange
 
     /**
      * @param args the command line arguments
@@ -400,7 +390,7 @@ public class MainFrame extends javax.swing.JFrame {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnChange;
     private javax.swing.JTextField edKey;
     private javax.swing.JTextField edValue;
     private javax.swing.JPanel jPanel1;

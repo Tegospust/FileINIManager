@@ -11,4 +11,5 @@ package com.ounis.fileinimanager;
  */
 public class CONST {
     public static final String MODULE_NAME = "FileINIManager.CONST";
+    public static final String APP_TITLE = "FileINIManager";
 }
