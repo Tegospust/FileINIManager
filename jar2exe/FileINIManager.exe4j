@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exe4j version="9.0" transformSequenceNumber="3">
+  <directoryPresets config="G:/AndroidDevelop/NetBeansProjects/FileINIManager/Dystrybucja" />
+  <application name="FileINIManager" distributionSourceDir="G:/AndroidDevelop/NetBeansProjects/FileINIManager/Dystrybucja" />
+  <executable name="FileINIManager" executableDir="." executableMode="gui" checkConsoleParameter="true" />
+  <java mainClass="com.ounis.fileinimanager.FINIManApp" minVersion="1.8.0_171" maxVersion="1.9">
+    <classPath>
+      <archive location="G:/AndroidDevelop/NetBeansProjects/FileINIManager/Dystrybucja/FileINIManager.jar" failOnError="false" />
+    </classPath>
+  </java>
+</exe4j>

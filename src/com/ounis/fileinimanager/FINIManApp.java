@@ -52,6 +52,8 @@ public class FINIManApp {
         if (args.length > 0) {
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
+//                    System.out.println("w modrę...");
+
                     new MainFrame(args[0]).setVisible(true);
                 }
             });        

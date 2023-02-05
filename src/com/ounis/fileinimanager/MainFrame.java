@@ -8,6 +8,8 @@ package com.ounis.fileinimanager;
 import com.ounis.utils.FramesUtils;
 import javax.swing.DefaultListModel;
 import com.ounis.fileinistruct.*;
+import java.awt.Font;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -62,8 +64,11 @@ public class MainFrame extends javax.swing.JFrame {
                     clearKeyValueEditPanel(1);
                 }
                 lmItems.addAll(fINIManager.getItems4Section(selSect.getSection()));
-                
-            }
+//               pobranie komentarza                
+                mRemark.setText(fINIManager.findNearestRemark(selSect.getLineNum(), 3));
+            
+
+            } // dwuklik
         }
     }
     
@@ -81,7 +86,7 @@ public class MainFrame extends javax.swing.JFrame {
                 String item = getChoosenItem(lstItems);
                 edKey.setText(item);
                 edValue.setText(fINIManager.getValue4SectKey(sect, item));
-                
+                mRemark.setText(fINIManager.findNearestRemark(lstItems.getModel().getElementAt(lstItems.getSelectedIndex()).getLineNum(), 3));                
             }
         }
     }
@@ -102,8 +107,13 @@ public class MainFrame extends javax.swing.JFrame {
      */
     private String getValueFromList(JList<FINILine> aList) {
         String result = null;
-        if (aList.getModel().getSize() > 0) 
-            result = aList.getModel().getElementAt(aList.getSelectedIndex()).getSection();
+        if (aList.getModel().getSize() > 0) {
+            FINILine e = aList.getModel().getElementAt(aList.getAnchorSelectionIndex());
+            if (e instanceof FINILineSection)
+                result = e.getSection();
+            else if (e instanceof FINILineKeyValue)
+                result = ((FINILineKeyValue) e).getKey();
+        }
         return result;
     }
     
@@ -140,9 +150,9 @@ public class MainFrame extends javax.swing.JFrame {
 //          lstSections SETUP
             lmSections = new DefaultListModel<FINILine>();
             lmSections.addAll(fINIManager.getSections());
-            
-            for(FINILine finil: fINIManager.getSections())
-                lmSections.addElement(finil);
+//          zamiast:            
+//            for(FINILine finil: fINIManager.getSections())
+//                lmSections.addElement(finil);
             lstSections.setModel(lmSections);
             
 //            Enumeration elements = fINIManager.getSections().elements();
@@ -159,9 +169,17 @@ public class MainFrame extends javax.swing.JFrame {
 //            btnSave SETUP
             btnSave.addActionListener(new btnSaveClick());
             
+//            mRemark SETUP 
+            Font f = new Font("Monospace", Font.BOLD + Font.ITALIC, 14);
+            mRemark.setFont(f);
+            mRemark.setWrapStyleWord(true);
+            
+            
         }
         else
-            JOptionPane.showMessageDialog(null, "Problem z wczytaniem pliku ".concat(aFileName), "Błąd!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Problem z wczytaniem pliku ".concat(aFileName), 
+                    "Błąd!", 
+                    JOptionPane.ERROR_MESSAGE);
 //            JOptionPane.showMessageDialog(null, "Problem z wczytaniem pliku: ".concat(aFileName), JOptionPane.ERROR_MESSAGE);
 
     }
@@ -187,6 +205,9 @@ public class MainFrame extends javax.swing.JFrame {
         edKey = new javax.swing.JTextField();
         lblValue = new javax.swing.JLabel();
         edValue = new javax.swing.JTextField();
+        lblRemark = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        mRemark = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -271,6 +292,15 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        lblRemark.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblRemark.setText("Komentarz");
+
+        mRemark.setEditable(false);
+        mRemark.setColumns(20);
+        mRemark.setFont(new java.awt.Font("Monospaced", 1, 12)); // NOI18N
+        mRemark.setRows(5);
+        jScrollPane3.setViewportView(mRemark);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -283,7 +313,12 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblRemark)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane3)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblItems)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -302,9 +337,14 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(lblSections)
                     .addComponent(lblItems))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblRemark)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3)))
                 .addContainerGap(26, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -366,11 +406,14 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblItems;
     private javax.swing.JLabel lblKey;
+    private javax.swing.JLabel lblRemark;
     private javax.swing.JLabel lblSections;
     private javax.swing.JLabel lblValue;
     private javax.swing.JList<FINILine> lstItems;
     private javax.swing.JList<FINILine> lstSections;
+    private javax.swing.JTextArea mRemark;
     // End of variables declaration//GEN-END:variables
 }

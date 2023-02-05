@@ -6,6 +6,7 @@ package com.ounis.fileinimanager;
  */
 
 import com.ounis.fileinistruct.*;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.DefaultListModel;
 
 /**
@@ -52,7 +54,7 @@ public class FileINIManager {
 //                System.out.println(String.format("%d - %s",result, line));
                 result += 1;
                 if (line.startsWith(com.ounis.fileinistruct.CONST.PREF_REM)) {
-                    this.fileINILines.add(new FINILineRem(result, section, line.substring(1)));
+                    this.fileINILines.add(new FINILineRem(result, section, line.substring(0)));
                     continue;
                 } 
                 if (line.startsWith(com.ounis.fileinistruct.CONST.PREF_SECT)) {
@@ -206,6 +208,44 @@ public class FileINIManager {
         }
         return result;
     }
+    
+    String findNearestRemark(int fromNumLine, int deepOfSearch) {
+        ArrayList<String> remarks = null;
+        int listindex = -1;
+        int start, end = 0;
+        
+        
+        for(int idx = 0;idx < fileINILines.size();idx++) {
+            if (fileINILines.get(idx).getLineNum() == fromNumLine) {
+                listindex = idx;
+                break;
+            }
+        }
+//        stara wersja:
+        if (!(listindex == -1)) {
+            start = listindex;//-deepOfSearch - 1 < 0 ? 0 : listindex-deepOfSearch;
+            end = listindex+deepOfSearch > fileINILines.size()-1 ? fileINILines.size()-1 : listindex+deepOfSearch;
+            for(FINILine finil: fileINILines) {
+                if (finil.getLineNum() >= start && finil.getLineNum() <= end) 
+                    if (!(finil instanceof FINILineEmpty)) {
+                        if (remarks == null)
+                            remarks = new ArrayList();
+                        remarks.add(finil.getLine());
+                    }
+                    
+            }
+        }        
+
+        
+        String buff = "";
+        for(String s: remarks)
+            buff = buff.concat(s.concat("\n"));
+        return buff;
+
+
+
+    }
+    
 /**
  * <font size="5" color="#ff0000">na potrzeby testów</font>
  * 
