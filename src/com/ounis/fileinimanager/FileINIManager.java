@@ -10,6 +10,7 @@ import com.ounis.fileinistruct.*;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -89,6 +90,34 @@ public class FileINIManager {
         
         return result;
     }
+
+    /**
+     * 
+     * Zapis linii do pliku
+     * 
+     * @param aFileName - nazwa pliku
+     * @throws Exception - rzuca ten wyjątek w przypadku niepowodzenia
+     */
+    public void save2File(String aFileName) throws Exception {
+        
+
+        FileWriter file = 
+                new FileWriter(aFileName, false);
+        String lnsep = System.getProperty("line.separator");        
+        String line2save = "";
+        for(FINILine finil: fileINILines) {
+            if (finil instanceof FINILineKeyValue) {
+                line2save = finil.toString();
+            }
+            else 
+                line2save = finil.getLine();
+//            System.out.println(line2save);
+            file.write(line2save.concat(lnsep));
+        }
+        file.flush();
+        file.close();
+        
+      }
     
     /**
      * 
@@ -287,6 +316,30 @@ public class FileINIManager {
                 updatedKeys.add(finil);
                 result = true;
             }
+        }
+        return result;
+    }
+    /**
+     * 
+     * @param aSection
+     * @param aKey
+     * @param aNewValue
+     * @return 
+     */
+    public boolean updateValue(String aSection, String aKey, String aNewValue) {
+        boolean result = false;
+        Iterator<FINILine> iter = fileINILines.iterator();
+        FINILine finil = null;
+        while(iter.hasNext()) {
+            finil = iter.next();
+            if(finil instanceof FINILineKeyValue) {
+                if(aSection.equals(finil.getSection()) && aKey.equals(((FINILineKeyValue) finil).getKey())) {
+                    ((FINILineKeyValue) finil).setValue(aNewValue);
+                    result = true;
+                    break;
+                }
+            }
+            finil = null;
         }
         return result;
     }

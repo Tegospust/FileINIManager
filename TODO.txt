@@ -1,0 +1,3 @@
+
+- kalibracja komentarzy w okienku przeglądania
+    (linia w górę, linia w dół)
