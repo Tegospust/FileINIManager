@@ -43,6 +43,7 @@ public class FINIManApp {
         //
         //   spolszczenie przycisków okien dialogowych
         //
+        //  http://www.java2s.com/Tutorial/Java/0240__Swing/SettingJOptionPanebuttonlabelstoFrench.htm
         UIManager.put("OptionPane.noButtonText", "Nie");
         UIManager.put("OptionPane.yesButtonText", "Tak");
         UIManager.put("OptionPane.cancelButtonText", "Anuluj");

@@ -28,9 +28,24 @@ public class FileINIManager {
         return this.fileName;
     }
     
+    /**
+     * strukura reprezentująca wiersze we wczytanym pliku .ini
+     */
     private ArrayList<FINILine> fileINILines;
-    public ArrayList<FINILine> getFileINILines() {
-        return fileINILines;
+    
+    /**
+     * kopia fileINILines
+     * @return lista obiektów FINILine, lub null 
+     */
+    public final List<FINILine> getFileINILines() {
+//        tu powinna być zwracana kopia
+        List<FINILine> copy = null;
+        if (fileINILines != null) {
+            copy = new ArrayList<>();
+            for(FINILine finil:fileINILines)
+                copy.add(finil);
+        }
+        return copy;
     }
     
     private ArrayList<FINILine> updatedKeys;
@@ -121,9 +136,11 @@ public class FileINIManager {
     
     /**
      * 
-     * @param aSectName
-     * @param aKey
-     * @return 
+     * pobiera wartość klucza w sekcji
+     * 
+     * @param aSectName - sekcja
+     * @param aKey - klucz
+     * @return - wartość klucza w sekcji String, niepowodzenie: null
      */
     public String getValue4SectKey(String aSectName, String aKey) {
         String result = null;
@@ -142,7 +159,7 @@ public class FileINIManager {
     }
     
     /**
-     * lista sekcji w liście ArrayList&lt;FINILine&gt;<br>
+     * lista sekcji w formie ArrayList&lt;FINILine&gt;<br>
      * 
      * https://www.baeldung.com/java-instanceof
      * 
@@ -162,7 +179,7 @@ public class FileINIManager {
         return result;
     }
     
-    /** lista sekcji w liście ArrayList&lt;String&gt;
+    /** lista sekcji w formie ArrayList&lt;String&gt;
      * 
      * @return ArrayList&lt;String&gt;
      */
@@ -180,7 +197,7 @@ public class FileINIManager {
     }
     
     /**
-     * lista pozyzji dla sekcji <b>getItem4Section</b> w liście ArrayList&lt;FINILine&gt;
+     * lista pozyzji dla sekcji <b>getItem4Section</b> w formie ArrayList&lt;FINILine&gt;
      * 
      * @param aSectionName nazwa sekcji
      * @return ArrayList&lt;FINILine&gt;
@@ -214,7 +231,7 @@ public class FileINIManager {
 //        return result;
 //    }
     /**
-     * lista pozycji dla sekcji <b>aSectionName</b> w liście ArrayList&lt;String&gt;
+     * lista pozycji dla sekcji <b>aSectionName</b> w formie ArrayList&lt;String&gt;
      * 
      * @param aSectionName nazwa sekcji
      * @return ArrayList;ltString;gt
@@ -233,6 +250,12 @@ public class FileINIManager {
         return result;
     }
     
+    /**
+     * lista kluczy w sekcji w formie ArrayList&lt;String&gt;<br>
+     * 
+     * @param aSectionName
+     * @return 
+     */
     public ArrayList<String> getKeys4SectionStr(String aSectionName) {
         ArrayList<String> result = null;
         ArrayList<FINILine> finilines = getItems4Section(aSectionName);
@@ -247,6 +270,15 @@ public class FileINIManager {
         return result;
     }
     
+    /**
+     * 
+     * zwraca linie komentarza wokół zadanej linii fromNumLine
+     * na głębokość deepOfSearch w górę lub w dół
+     * 
+     * @param fromNumLine - numer linii od której zaczyan się pobieranie linii komentarzy
+     * @param deepOfSearch - głębokość szukania góra/dół
+     * @return - wiersze odseparowane "\n" lub null
+     */
     String findNearestRemark(int fromNumLine, int deepOfSearch) {
         ArrayList<String> remarks = null;
         int listindex = -1;
