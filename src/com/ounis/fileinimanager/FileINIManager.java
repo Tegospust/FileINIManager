@@ -293,7 +293,7 @@ public class FileINIManager {
         }
 //        stara wersja:
         if (!(listindex == -1)) {
-            start = listindex;//-deepOfSearch - 1 < 0 ? 0 : listindex-deepOfSearch;
+            start = listindex - deepOfSearch - 1 < 0 ? 0 : listindex-deepOfSearch;
             end = listindex+deepOfSearch > fileINILines.size()-1 ? fileINILines.size()-1 : listindex+deepOfSearch;
             for(FINILine finil: fileINILines) {
                 if (finil.getLineNum() >= start && finil.getLineNum() <= end) 
@@ -308,8 +308,9 @@ public class FileINIManager {
 
         
         String buff = "";
-        for(String s: remarks)
-            buff = buff.concat(s.concat("\n"));
+        if (remarks != null)
+            for(String s: remarks)
+                buff = buff.concat(s.concat("\n"));
         return buff;
     }
     
